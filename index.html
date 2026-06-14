@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sutra Analytics Lab — Arthashastra 2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --navy:#0D1E3A;--navy2:#1B3A6B;--gold:#8B6914;--goldl:#C8920A;--goldg:#F0C040;
+ --cream:#F5EDD8;--teal:#1A6B5E;--rust:#8B1A1A;--blue:#3A5FA0;
+ --disp:'Cinzel',serif;--fell:'IM Fell English',serif;--text:'Crimson Pro',serif;
+}
+body{background:var(--navy);color:var(--cream);font-family:var(--text);font-size:17px;line-height:1.7;overflow-x:hidden}
+::selection{background:var(--goldg);color:var(--navy)}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+ padding:18px 50px;background:linear-gradient(to bottom,rgba(13,30,58,0.97),rgba(13,30,58,0.7));backdrop-filter:blur(6px);
+ border-bottom:1px solid rgba(139,105,20,0.2)}
+.logo{font-family:var(--disp);font-size:12px;letter-spacing:0.25em;color:var(--goldg);text-transform:uppercase;text-decoration:none}
+.nav-r{display:flex;gap:32px}
+.nav-r a{font-family:var(--disp);font-size:10px;letter-spacing:0.18em;color:rgba(245,237,216,0.6);text-transform:uppercase;text-decoration:none;transition:color .3s}
+.nav-r a:hover{color:var(--goldg)}
+
+/* hero */
+header{padding:160px 50px 80px;text-align:center;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;
+ background:radial-gradient(ellipse at 50% -20%,rgba(27,58,107,0.7),transparent 60%);pointer-events:none}
+.h-label{font-family:var(--disp);font-size:10px;letter-spacing:0.45em;color:var(--goldl);text-transform:uppercase;margin-bottom:24px;display:block}
+h1{font-family:var(--disp);font-size:clamp(32px,5.5vw,64px);font-weight:700;line-height:1.1;margin-bottom:18px}
+h1 em{font-style:normal;color:var(--goldg)}
+.h-sub{font-family:var(--fell);font-style:italic;font-size:18px;color:rgba(245,237,216,0.65);max-width:640px;margin:0 auto 50px}
+.h-stats{display:flex;gap:60px;justify-content:center;flex-wrap:wrap}
+.h-stat{text-align:center}
+.h-stat b{font-family:var(--disp);font-size:34px;color:var(--goldg);display:block;font-weight:700;line-height:1}
+.h-stat span{font-family:var(--disp);font-size:9px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase}
+
+/* controls */
+.controls{position:sticky;top:62px;z-index:90;padding:18px 50px;background:rgba(13,30,58,0.95);backdrop-filter:blur(8px);
+ border-bottom:1px solid rgba(139,105,20,0.25);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.f-btn{font-family:var(--disp);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;padding:9px 18px;
+ background:transparent;border:1px solid rgba(139,105,20,0.4);color:rgba(245,237,216,0.6);cursor:pointer;transition:all .3s}
+.f-btn:hover{border-color:var(--goldg);color:var(--goldg)}
+.f-btn.active{background:var(--goldg);color:var(--navy);border-color:var(--goldg)}
+.f-btn[data-theme="Governance"].active{background:var(--navy2);color:#fff;border-color:var(--navy2)}
+.f-btn[data-theme="Economy"].active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.f-btn[data-theme="Security"].active{background:var(--rust);color:#fff;border-color:var(--rust)}
+.f-btn[data-theme="Ethics"].active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.f-btn[data-theme="Resilience"].active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sort-sel{font-family:var(--disp);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+ background:var(--navy);border:1px solid rgba(139,105,20,0.4);color:var(--cream);padding:9px 14px;cursor:pointer}
+.search{flex:1;min-width:180px;max-width:300px;background:rgba(27,58,107,0.3);border:1px solid rgba(139,105,20,0.35);
+ color:var(--cream);font-family:var(--text);font-size:14px;padding:9px 16px;outline:none}
+.search:focus{border-color:var(--goldg)}
+.search::placeholder{color:rgba(245,237,216,0.35);font-style:italic}
+.count-badge{font-family:var(--disp);font-size:10px;letter-spacing:0.2em;color:var(--gold)}
+
+/* layout */
+main{padding:50px}
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px;max-width:1500px;margin:0 auto}
+
+/* sutra card */
+.sc{background:linear-gradient(150deg,rgba(27,58,107,0.28),rgba(13,30,58,0.5));border:1px solid rgba(139,105,20,0.22);
+ border-top:3px solid var(--gold);padding:28px;cursor:pointer;transition:all .35s ease;position:relative;overflow:hidden}
+.sc:hover{transform:translateY(-5px);border-color:rgba(240,192,64,0.5);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+.sc.t-Governance{border-top-color:#4A80C8}.sc.t-Economy{border-top-color:#2A9D8A}
+.sc.t-Security{border-top-color:#C0504A}.sc.t-Ethics{border-top-color:#C8920A}
+.sc.t-Resilience{border-top-color:#6A8FD0}
+.sc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.sc-num{font-family:var(--disp);font-size:9px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase}
+.sc-theme{font-family:var(--disp);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;padding:4px 10px;border-radius:10px}
+.t-Governance .sc-theme{background:rgba(74,128,200,0.2);color:#7AA8E0}
+.t-Economy .sc-theme{background:rgba(42,157,138,0.2);color:#50C8B0}
+.t-Security .sc-theme{background:rgba(192,80,74,0.2);color:#E08078}
+.t-Ethics .sc-theme{background:rgba(200,146,10,0.22);color:#F0C040}
+.t-Resilience .sc-theme{background:rgba(106,143,208,0.2);color:#94B4E8}
+.sc-text{font-family:var(--fell);font-style:italic;font-size:16px;line-height:1.6;color:var(--cream);margin-bottom:20px;min-height:74px}
+.gauges{display:flex;flex-direction:column;gap:9px}
+.g-row{display:grid;grid-template-columns:74px 1fr 24px;gap:10px;align-items:center}
+.g-lbl{font-family:var(--disp);font-size:8px;letter-spacing:0.18em;color:rgba(245,237,216,0.5);text-transform:uppercase}
+.g-track{height:5px;background:rgba(245,237,216,0.08);border-radius:3px;overflow:hidden}
+.g-fill{height:100%;border-radius:3px;transform:scaleX(0);transform-origin:left;transition:transform 1.1s cubic-bezier(.16,1,.3,1)}
+.g-fill.u{background:linear-gradient(to right,#7A2810,#E05040)}
+.g-fill.f{background:linear-gradient(to right,#0D4A40,#2AB89A)}
+.g-fill.i{background:linear-gradient(to right,#8B6914,#F0C040)}
+.sc.animate .g-fill{transform:scaleX(1)}
+.g-val{font-family:var(--disp);font-size:11px;color:var(--cream);text-align:right}
+.sc-expand{font-family:var(--disp);font-size:8.5px;letter-spacing:0.25em;color:var(--goldl);text-transform:uppercase;margin-top:18px;display:flex;align-items:center;gap:8px}
+.sc-expand::after{content:'→';transition:transform .3s}
+.sc:hover .sc-expand::after{transform:translateX(5px)}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(5,12,26,0.88);backdrop-filter:blur(8px);
+ display:none;align-items:center;justify-content:center;padding:30px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:linear-gradient(160deg,#13294A,#0D1E3A);border:1px solid rgba(139,105,20,0.4);
+ max-width:860px;width:100%;max-height:90vh;overflow-y:auto;padding:48px;position:relative;
+ animation:modalIn .4s cubic-bezier(.16,1,.3,1)}
+@keyframes modalIn{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:none}}
+.m-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--gold);font-size:26px;cursor:pointer;font-family:var(--text);transition:color .3s}
+.m-close:hover{color:var(--goldg)}
+.m-num{font-family:var(--disp);font-size:10px;letter-spacing:0.4em;color:var(--goldl);text-transform:uppercase;margin-bottom:14px;display:block}
+.m-text{font-family:var(--fell);font-style:italic;font-size:24px;line-height:1.55;color:var(--cream);margin-bottom:28px;
+ border-left:3px solid var(--goldg);padding-left:24px}
+.m-section{margin-bottom:26px}
+.m-h{font-family:var(--disp);font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;
+ padding-bottom:8px;border-bottom:1px solid rgba(139,105,20,0.25)}
+.m-list{list-style:none}
+.m-list li{font-size:14.5px;color:rgba(245,237,216,0.75);padding:7px 0;display:flex;gap:12px;align-items:flex-start;line-height:1.6}
+.m-list li::before{content:'◆';color:var(--goldg);font-size:8px;margin-top:7px;flex-shrink:0}
+.m-risk{background:rgba(139,26,26,0.12);border-left:3px solid var(--rust);padding:16px 20px;font-style:italic;
+ font-size:14.5px;color:rgba(245,237,216,0.8);line-height:1.65}
+.m-anchor{font-size:13px;color:rgba(245,237,216,0.5);font-style:italic}
+.m-radar-wrap{display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center;margin-bottom:26px}
+.m-radar-wrap canvas{width:100%}
+.m-scores{display:flex;flex-direction:column;gap:14px}
+.ms-row{display:grid;grid-template-columns:90px 1fr 30px;gap:12px;align-items:center}
+.ms-lbl{font-family:var(--disp);font-size:9px;letter-spacing:0.2em;color:rgba(245,237,216,0.55);text-transform:uppercase}
+.ms-track{height:8px;background:rgba(245,237,216,0.08);border-radius:4px;overflow:hidden}
+.ms-fill{height:100%;border-radius:4px}
+.ms-val{font-family:var(--disp);font-size:15px;color:var(--goldg);text-align:right}
+
+/* assessment tool */
+#assess{padding:100px 50px;background:linear-gradient(to bottom,transparent,rgba(13,74,64,0.1),transparent)}
+.a-inner{max-width:1200px;margin:0 auto}
+.a-head{text-align:center;margin-bottom:60px}
+.a-grid{display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:start}
+.a-sliders{display:flex;flex-direction:column;gap:4px;max-height:560px;overflow-y:auto;padding-right:18px}
+.a-sliders::-webkit-scrollbar{width:5px}
+.a-sliders::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
+.a-sliders::-webkit-scrollbar-track{background:rgba(245,237,216,0.05)}
+.as-row{display:grid;grid-template-columns:1fr 130px 32px;gap:16px;align-items:center;padding:10px 14px;
+ border-bottom:1px solid rgba(139,105,20,0.12);transition:background .3s}
+.as-row:hover{background:rgba(27,58,107,0.25)}
+.as-lbl{font-size:13.5px;color:rgba(245,237,216,0.75);font-style:italic;line-height:1.45}
+.as-lbl b{font-family:var(--disp);font-style:normal;font-size:9px;letter-spacing:0.2em;color:var(--gold);display:block;margin-bottom:2px}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:rgba(245,237,216,0.12);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--goldg);cursor:pointer;border:2px solid var(--navy);box-shadow:0 0 0 1px var(--goldg)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--goldg);cursor:pointer;border:2px solid var(--navy)}
+.as-val{font-family:var(--disp);font-size:14px;color:var(--goldg);text-align:center}
+.a-result{position:sticky;top:120px;background:linear-gradient(160deg,rgba(27,58,107,0.4),rgba(13,30,58,0.6));
+ border:1px solid rgba(139,105,20,0.3);padding:36px}
+.a-score-big{text-align:center;margin-bottom:28px}
+.a-score-n{font-family:var(--disp);font-size:64px;font-weight:700;color:var(--goldg);line-height:1}
+.a-score-l{font-family:var(--disp);font-size:9px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase}
+.a-verdict{font-family:var(--fell);font-style:italic;text-align:center;font-size:15px;color:rgba(245,237,216,0.75);
+ margin-bottom:24px;min-height:48px;line-height:1.6}
+#assess-radar{width:100%;max-width:340px;margin:0 auto;display:block}
+.a-theme-rows{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+.at-row{display:grid;grid-template-columns:92px 1fr 36px;gap:12px;align-items:center}
+.at-lbl{font-family:var(--disp);font-size:8.5px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,237,216,0.55)}
+.at-track{height:6px;background:rgba(245,237,216,0.08);border-radius:3px;overflow:hidden}
+.at-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.at-val{font-family:var(--disp);font-size:12px;color:var(--cream);text-align:right}
+.a-btns{display:flex;gap:12px;margin-top:28px}
+.a-btn{flex:1;font-family:var(--disp);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;padding:13px;
+ cursor:pointer;transition:all .3s;border:1px solid rgba(240,192,64,0.4);background:transparent;color:var(--goldg)}
+.a-btn:hover{background:rgba(240,192,64,0.1)}
+.a-btn.primary{background:var(--goldg);color:var(--navy);border-color:var(--goldg)}
+.a-btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(240,192,64,0.25)}
+
+/* scatter quadrant */
+#quadrant{padding:100px 50px}
+.q-inner{max-width:1000px;margin:0 auto;text-align:center}
+#quad-canvas{width:100%;max-width:760px;margin:40px auto 0;display:block;cursor:crosshair}
+.q-tip{position:fixed;z-index:300;pointer-events:none;background:rgba(13,30,58,0.97);border:1px solid var(--goldg);
+ padding:12px 16px;max-width:280px;font-size:12.5px;font-style:italic;color:var(--cream);display:none;line-height:1.5}
+.q-tip b{font-family:var(--disp);font-style:normal;font-size:9px;letter-spacing:0.2em;color:var(--goldg);display:block;margin-bottom:4px}
+
+.sec-label{font-family:var(--disp);font-size:10px;letter-spacing:0.4em;color:var(--goldl);text-transform:uppercase;display:block;margin-bottom:18px}
+.sec-h{font-family:var(--disp);font-size:clamp(26px,3.5vw,42px);font-weight:600;line-height:1.18;margin-bottom:18px}
+.sec-h em{font-style:italic;color:var(--goldg)}
+.sec-p{font-size:15.5px;color:rgba(245,237,216,0.65);max-width:580px;margin:0 auto}
+
+footer{padding:50px;text-align:center;border-top:1px solid rgba(139,105,20,0.2)}
+.foot-m{font-family:var(--fell);font-style:italic;font-size:15px;color:rgba(245,237,216,0.45);margin-bottom:14px}
+.foot-c{font-family:var(--disp);font-size:9px;letter-spacing:0.25em;color:rgba(245,237,216,0.3);text-transform:uppercase}
+
+@media(max-width:980px){
+ nav{padding:16px 22px}.nav-r{display:none}
+ main,header,#assess,#quadrant{padding-left:22px;padding-right:22px}
+ .controls{padding:14px 22px}
+ .a-grid{grid-template-columns:1fr}
+ .a-result{position:static}
+ .m-radar-wrap{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+ <a class="logo" href="#">Arthashastra 2.0 · Analytics Lab</a>
+ <div class="nav-r">
+  <a href="#explorer">Sutra Explorer</a>
+  <a href="#quadrant">Strategy Map</a>
+  <a href="#assess">Self-Assessment</a>
+ </div>
+</nav>
+
+<header>
+ <span class="h-label">Interactive Analytical Tools</span>
+ <h1>The Sutra<br><em>Analytics Lab</em></h1>
+ <p class="h-sub">Every one of the thirty Sutras, instrumented: governance scores, measurable indicators, priority actions, risk assessments — and a self-assessment engine for your own institution.</p>
+ <div class="h-stats">
+  <div class="h-stat"><b>30</b><span>Sutras Instrumented</span></div>
+  <div class="h-stat"><b>90</b><span>Indicators</span></div>
+  <div class="h-stat"><b>90</b><span>Priority Actions</span></div>
+  <div class="h-stat"><b>5</b><span>Strategic Themes</span></div>
+ </div>
+</header>
+
+<!-- ── CONTROLS ─────────────────────────────────────────────────────── -->
+<div class="controls" id="explorer">
+ <button class="f-btn active" data-theme="all">All Themes</button>
+ <button class="f-btn" data-theme="Governance">Governance</button>
+ <button class="f-btn" data-theme="Economy">Economy</button>
+ <button class="f-btn" data-theme="Security">Security</button>
+ <button class="f-btn" data-theme="Ethics">Ethics</button>
+ <button class="f-btn" data-theme="Resilience">Resilience</button>
+ <select class="sort-sel" id="sort">
+  <option value="n">Sort: Sutra №</option>
+  <option value="U">Sort: Urgency ↓</option>
+  <option value="F">Sort: Feasibility ↓</option>
+  <option value="I">Sort: Impact ↓</option>
+  <option value="P">Sort: Priority Index ↓</option>
+ </select>
+ <input class="search" id="search" placeholder="Search the sutras…">
+ <span class="count-badge" id="count">30 shown</span>
+</div>
+
+<main><div class="lab-grid" id="grid"></div></main>
+
+<!-- ── STRATEGY QUADRANT ────────────────────────────────────────────── -->
+<section id="quadrant">
+ <div class="q-inner">
+  <span class="sec-label">The Strategy Map</span>
+  <h2 class="sec-h">Urgency × Feasibility<br><em>Where to Act First</em></h2>
+  <p class="sec-p">Each dot is one Sutra; size encodes impact. Hover to identify. The upper-right quadrant — urgent and feasible — is where the national agenda must begin.</p>
+  <canvas id="quad-canvas" width="760" height="560"></canvas>
+ </div>
+</section>
+<div class="q-tip" id="qtip"></div>
+
+<!-- ── SELF ASSESSMENT ──────────────────────────────────────────────── -->
+<section id="assess">
+ <div class="a-inner">
+  <div class="a-head">
+   <span class="sec-label">Interactive Tool</span>
+   <h2 class="sec-h">Sutra Readiness<br><em>Self-Assessment</em></h2>
+   <p class="sec-p">Rate your institution, ministry, or organisation against each Sutra from 0 (no capability) to 10 (fully realised). The engine computes your readiness profile in real time.</p>
+  </div>
+  <div class="a-grid">
+   <div class="a-sliders" id="sliders"></div>
+   <div class="a-result">
+    <div class="a-score-big">
+     <div class="a-score-n" id="total-score">0</div>
+     <div class="a-score-l">Composite Readiness / 100</div>
+    </div>
+    <p class="a-verdict" id="verdict">Move the sliders to begin your assessment.</p>
+    <canvas id="assess-radar" width="340" height="340"></canvas>
+    <div class="a-theme-rows" id="theme-rows"></div>
+    <div class="a-btns">
+     <button class="a-btn" id="reset-btn">Reset</button>
+     <button class="a-btn" id="random-btn">Demo Profile</button>
+     <button class="a-btn primary" id="export-btn">Export Report</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ── MODAL ────────────────────────────────────────────────────────── -->
+<div class="modal-bg" id="modal-bg">
+ <div class="modal" id="modal"></div>
+</div>
+
+<footer>
+ <p class="foot-m">"He who commands trust rules forever."</p>
+ <p class="foot-c">© 2026 Md Taufiqul Islam · Arthashastra 2.0 · Sutra Analytics Lab</p>
+</footer>
+
+<script>
+// ═══ THE COMPLETE ANALYTICAL DATASET ════════════════════════════════════════
+const S = [
+{n:1,ch:"I",theme:"Governance",t:"The ruler shall listen to both the voices of his people and machine judgment, yet surrender to neither.",U:8,F:7,I:9,
+ ind:["% of cabinet-level decisions with documented human-override authority","Existence of an AI Decision-Audit Register in each ministry","Annual survey: citizen trust in AI-assisted public decisions"],
+ act:["Mandate human-in-the-loop sign-off for consequential automated decisions","Train Deputy Secretaries and above in algorithmic literacy","Publish an annual AI Decision Transparency Report"],
+ anchor:"Pasquale (2015), The Black Box Society",risk:"Decision-making authority quietly migrates to opaque systems and the vendors who build them; accountability dissolves."},
+{n:2,ch:"I",theme:"Governance",t:"He who does not understand code shall be ruled by those who write it.",U:9,F:6,I:9,
+ ind:["% of senior civil servants completing certified AI literacy training","Number of technologists embedded in policy units","Procurement contracts independently auditable by government engineers"],
+ act:["Compulsory AI fundamentals module at BPATC for all cadres","Create a Government Technologist cadre with competitive pay","Require source-code escrow for critical government AI systems"],
+ anchor:"Acemoglu (2021), NBER WP 29247",risk:"Vendor capture: the state becomes structurally incapable of evaluating what it buys, deploys, or regulates."},
+{n:3,ch:"I",theme:"Governance",t:"In a land of many rivers, governance must flow — adaptive, not rigid.",U:7,F:7,I:8,
+ ind:["Statutory review interval of the National AI Policy (target: annual)","Number of regulatory sandbox cohorts completed per year","Average time from policy gap detection to amendment"],
+ act:["Insert sunset-and-review clauses into every AI regulation","Operationalise National AI Sandboxes with published learning reports","Establish a horizon-scanning cell in the Cabinet Division"],
+ anchor:"Walker et al. (2004), Ecology & Society",risk:"Static rules ossify; regulation lags technology by years and either strangles innovation or fails to prevent harm."},
+{n:4,ch:"II",theme:"Economy",t:"Data is the new wealth; guard it as once gold was guarded in vaults.",U:10,F:6,I:10,
+ ind:["% of government data hosted on sovereign infrastructure","Enactment status of the Data Protection Ordinance","Volume of open Bangla-language datasets published (GB/year)"],
+ act:["Enact the Data Protection Ordinance with an independent authority","Build the National Data Trust as a distributed edge-node grid","Mandate sovereign hosting for all citizen-service data"],
+ anchor:"Acquisti, Taylor & Wagman (2016), JEL 54(2)",risk:"National data wealth accrues to foreign clouds; Bangladesh becomes a data colony with no bargaining position."},
+{n:5,ch:"II",theme:"Economy",t:"Garments are woven in factories, but power is woven in networks.",U:7,F:8,I:8,
+ ind:["AI/data services export earnings (USD M/year)","Number of certified ethical data-annotation firms","Average wage premium of data workers vs. RMG baseline"],
+ act:["Launch an Ethical Data Annotation export strategy with fair-labour certification","Extend RMG-style bonded-zone incentives to AI services parks","Negotiate data-services chapters into trade agreements"],
+ anchor:"Sambasivan et al. (2021), CHI '21",risk:"The garment playbook is never translated; the demographic dividend expires unconverted into digital value."},
+{n:6,ch:"II",theme:"Economy",t:"The youth skilled in logic and learning are the true treasure of Bangladesh.",U:9,F:7,I:10,
+ ind:["AI/CS graduates per year (target trajectory)","Brain-drain ratio of top-quintile STEM graduates","R&D spending as % of GDP (0.3% → 1.0%)"],
+ act:["Fund 1,000 Trust Scholarships tied to 5-year national service","Embed AI ethics and computational thinking in secondary curricula","Create returnee fellowships for diaspora AI researchers"],
+ anchor:"Sen (1999), Development as Freedom",risk:"The demographic dividend becomes a demographic liability: educated youth emigrate or remain underemployed."},
+{n:7,ch:"III",theme:"Security",t:"Where spies once walked in shadows, now algorithms walk in light unseen.",U:8,F:5,I:9,
+ ind:["Judicial warrant requirements for algorithmic surveillance","Number of independent audits of state surveillance systems","Public register of government AI surveillance deployments"],
+ act:["Legislate judicial oversight for all algorithmic surveillance","Create an independent Surveillance Review Board","Publish an annual transparency report on state data requests"],
+ anchor:"Zuboff (2015), JIT 30(1)",risk:"Unaccountable surveillance normalises; the state gains capabilities that outlive any government's good intentions."},
+{n:8,ch:"III",theme:"Resilience",t:"To foresee a flood — of water or of misinformation — is greater than to control it after.",U:9,F:8,I:9,
+ ind:["Lead-time of AI flood forecasts (hours of warning)","Mean time-to-detection of coordinated disinformation campaigns","% of upazilas covered by early-warning dissemination"],
+ act:["Deploy AI-enhanced flood forecasting nationally","Stand up a Misinformation Early Warning Centre","Integrate disinformation drills into disaster preparedness"],
+ anchor:"Vosoughi, Roy & Aral (2018), Science",risk:"Both literal and informational floods strike unwarned populations; response costs dwarf prevention costs."},
+{n:9,ch:"III",theme:"Security",t:"Let secrets travel in encryption, not in trust alone.",U:8,F:7,I:8,
+ ind:["% of inter-ministry traffic under end-to-end encryption","Sovereign key-management infrastructure operational","Annual penetration-test coverage of critical systems"],
+ act:["Mandate end-to-end encryption for classified government traffic","Build sovereign PKI and key-escrow infrastructure","Quarterly red-team exercises on critical information systems"],
+ anchor:"Rid & Buchanan (2015), JSS 38",risk:"A single breach exposes decades of state communication; deterrence by secrecy collapses."},
+{n:10,ch:"IV",theme:"Governance",t:"The battlefield of the state is no longer land, but the minds of its people.",U:9,F:5,I:10,
+ ind:["National media-literacy index (baseline → target)","% of school curricula including critical information literacy","Penetration of verified public-information channels"],
+ act:["National media and AI literacy campaign across all districts","Critical information literacy in secondary education","Strengthen public-service media as an epistemic anchor"],
+ anchor:"Bail et al. (2018), PNAS 115(37)",risk:"The population's information environment is shaped by foreign platforms and adversarial actors; cohesion erodes invisibly."},
+{n:11,ch:"IV",theme:"Ethics",t:"Divide not the people through careless algorithms, lest the state fracture without war.",U:8,F:5,I:9,
+ ind:["Algorithmic-impact assessments filed per high-risk deployment","Independent bias audits conducted per year","Polarisation indices tracked in national surveys"],
+ act:["Mandate Algorithmic Impact Assessments for public-facing systems","Establish an independent algorithmic bias audit office","Require platforms to publish recommender-system risk reports"],
+ anchor:"Angwin et al. (2016), ProPublica",risk:"Engagement-optimised algorithms quietly amplify division until social fracture appears suddenly and irreversibly."},
+{n:12,ch:"IV",theme:"Governance",t:"Trust is the strongest embankment against unrest.",U:8,F:6,I:10,
+ ind:["Public trust in AI-using institutions (annual survey)","Complaint-resolution time for algorithmic decisions","% of AI systems with published accountability documentation"],
+ act:["Publish plain-language documentation for every public AI system","Create an AI Ombudsman with binding remedy powers","Institute participatory review panels with citizen members"],
+ anchor:"Diakopoulos (2016), CACM 59(2)",risk:"Each opaque failure compounds distrust; eventually even beneficial systems are rejected by a burned public."},
+{n:13,ch:"V",theme:"Ethics",t:"Justice given by a machine must still be understood by a human.",U:8,F:6,I:9,
+ ind:["% of judicial AI outputs with human-readable reasoning","Appeals filed against algorithm-assisted decisions and outcomes","Human Rights Impact Assessments completed before deployment"],
+ act:["Pilot judicial AI only with mandatory explanation interfaces","Guarantee statutory right to contest algorithmic decisions","HRIA required before any justice-sector AI deployment"],
+ anchor:"Dressel & Farid (2018), Science Advances",risk:"Defendants face verdicts no one can explain; due process becomes a formality and judicial legitimacy decays."},
+{n:14,ch:"V",theme:"Ethics",t:"The State that sees all must not be feared by all.",U:8,F:5,I:9,
+ ind:["Statutory limits on retention of citizen surveillance data","Citizen access requests fulfilled within statutory window (%)","Independent oversight body operational and reporting publicly"],
+ act:["Codify purpose limitation and retention limits in law","Give citizens access and correction rights over state-held data","Annual public reporting by the oversight authority"],
+ anchor:"UNESCO (2021), Ethics of AI",risk:"Chilled speech, performative conformity, and a brittle state that mistakes silence for stability."},
+{n:15,ch:"V",theme:"Ethics",t:"To control thought unjustly is a tyranny deeper than chains.",U:7,F:4,I:10,
+ ind:["Regulation of psychologically-targeted political advertising","Disclosure requirements for AI-personalised political content","Detection rate of covert influence operations in elections"],
+ act:["Ban undisclosed psychographic political targeting","Mandate provenance labels on synthetic political media","Empower the Election Commission with AI-forensics capacity"],
+ anchor:"Matz et al. (2017); Epstein & Robertson (2015), PNAS",risk:"Elections remain procedurally free while substantively manipulated; sovereignty of the voter quietly ends."},
+{n:16,ch:"VI",theme:"Security",t:"Neighbours are not only those across borders, but those across networks.",U:7,F:7,I:8,
+ ind:["Mapped dependency index across cloud, model, and chip layers","% of critical services with multi-vendor failover","Bilateral digital-cooperation agreements in force"],
+ act:["Commission a national digital dependency audit","Adopt multi-vendor and exit-clause requirements in procurement","Negotiate data-adequacy arrangements with key partners"],
+ anchor:"Dafoe (2018), AI Governance, Oxford",risk:"Invisible dependencies become leverage in a crisis; a sanctions decision in a foreign capital can switch off domestic services."},
+{n:17,ch:"VI",theme:"Economy",t:"Ally with those who share technology, not merely treaties.",U:6,F:7,I:8,
+ ind:["Technology-transfer clauses in signed AI partnerships","Joint research outputs with partner institutions per year","Bangladeshi researchers in international AI consortia"],
+ act:["Make capability transfer a precondition of AI MoUs","Co-fund joint AI labs with ASEAN, EU, and Gulf partners","Join international open-model and open-data alliances"],
+ anchor:"Lee (2018), AI Superpowers",risk:"Paper partnerships proliferate while capability stays abroad; Bangladesh signs much and learns little."},
+{n:18,ch:"VI",theme:"Security",t:"A company with data may wield more power than a state without it.",U:8,F:5,I:9,
+ ind:["Effective tax and audit reach over platform revenues in BD","Legal instruments compelling local platform accountability","Market concentration of AI gateways serving Bangladeshi users"],
+ act:["Enact platform accountability legislation with local representation rules","Coordinate Global-South positions on platform governance","Develop sovereign alternatives for critical public functions"],
+ anchor:"Zuboff (2019), Surveillance Capitalism",risk:"Policy becomes negotiation with entities larger than the state, on terms the state cannot see or set."},
+{n:19,ch:"VII",theme:"Security",t:"War is now silent — fought in circuits, currencies, and narratives.",U:9,F:5,I:9,
+ ind:["National cyber-incident mean time-to-respond","Critical infrastructure entities meeting security baselines (%)","Information-warfare doctrine adopted by armed forces"],
+ act:["Publish a national cyber and information warfare doctrine","Mandate security baselines for critical infrastructure operators","Create a joint civil-military information defence command"],
+ anchor:"Rid & Buchanan (2015), JSS",risk:"The first decisive blow of a future conflict lands before anyone recognises a war has begun."},
+{n:20,ch:"VII",theme:"Security",t:"Victory lies in shaping the enemy's choices, not destroying his armies.",U:6,F:5,I:8,
+ ind:["Strategic-communications capacity assessments","Scenario exercises on narrative conflict per year","Counter-influence response time during crises"],
+ act:["Build strategic communications capability in key ministries","Run annual narrative-warfare scenario exercises","Pre-position verified rapid-response information channels"],
+ anchor:"Fang (2026), The Economist",risk:"Adversaries set the narrative frame in every crisis; the state is permanently reactive and disbelieved."},
+{n:21,ch:"VII",theme:"Security",t:"The best war is unseen and therefore undeniable.",U:7,F:4,I:8,
+ ind:["Attribution: % of major incidents attributed within 90 days","Forensics specialists per million population","International attribution partnerships in force"],
+ act:["Invest in national digital forensics and attribution labs","Join collective-attribution coalitions with partner states","Pursue UN norms criminalising covert AI information operations"],
+ anchor:"Cavelty & Wenger (2020), CSP 41(1)",risk:"Deniable aggression goes unanswered; impunity invites escalation against the least defended targets."},
+{n:22,ch:"VIII",theme:"Economy",t:"Control the flow of goods, and you shape dependence; control the flow of data, and you shape destiny.",U:8,F:6,I:9,
+ ind:["Cross-border data-flow agreements with reciprocity clauses","% of national data value-chain captured domestically","Localisation requirements for strategic data classes"],
+ act:["Classify strategic data and set graduated localisation rules","Negotiate reciprocal data-flow terms in trade deals","Meter and value national data flows in official statistics"],
+ anchor:"Goldfarb & Tucker (2019), JEL 57(1)",risk:"Bangladesh exports raw data and imports finished intelligence — the classic colonial trade pattern, digitised."},
+{n:23,ch:"VIII",theme:"Economy",t:"Digital currency is not coin, but command.",U:7,F:6,I:8,
+ ind:["CBDC pilot design with privacy safeguards (status)","Interoperability of national payments with regional rails","% unbanked population reached by digital finance"],
+ act:["Pilot a privacy-preserving retail CBDC under Bangladesh Bank","Mandate open APIs and interoperability in digital payments","Extend digital finance to rural women as a priority cohort"],
+ anchor:"Stiglitz (2002), AER 92(3)",risk:"Monetary infrastructure is built by others, embedding foreign visibility and control into every transaction."},
+{n:24,ch:"VIII",theme:"Economy",t:"Let others build upon your systems, and they shall rise within your influence.",U:6,F:6,I:8,
+ ind:["Third-party services built on national digital public infrastructure","Regional adoption of Bangladeshi-origin standards or stacks","Open-source contributions from national projects"],
+ act:["Build digital public infrastructure as open, extensible platforms","Export the Bangla-LLM stack to Bangla-speaking communities globally","Champion Global-South interoperability standards"],
+ anchor:"Rochet & Tirole (2003), JEEA 1(4)",risk:"Bangladesh remains a permanent tenant on others' platforms, paying rent in data, fees, and dependence."},
+{n:25,ch:"IX",theme:"Resilience",t:"Floods will come — of water, of code, of chaos. Prepare before they rise.",U:9,F:7,I:9,
+ ind:["National AI-incident response plan tested per year","Backup and continuity coverage of critical registries (%)","Crisis-simulation exercises including AI failure modes"],
+ act:["Adopt a National AI Incident Response Framework","Test continuity of critical systems under simulated AI failure","Cross-train disaster management and cyber response teams"],
+ anchor:"Scott (1998), Seeing Like a State",risk:"The first major AI-system failure cascades unchecked through unprepared institutions."},
+{n:26,ch:"IX",theme:"Resilience",t:"A resilient state has many layers, like the Bengal delta it stands upon.",U:7,F:7,I:8,
+ ind:["Redundancy depth of critical digital services (layers)","Districts able to operate degraded-mode services","Diversity of suppliers across the national AI stack"],
+ act:["Architect critical services for graceful degradation","Devolve operational capacity to division and district levels","Enforce supplier diversity in strategic procurement"],
+ anchor:"Walker et al. (2004), Ecology & Society",risk:"A monolithic stack fails monolithically; one outage becomes a national standstill."},
+{n:27,ch:"IX",theme:"Resilience",t:"Speed of adaptation is greater than strength of position.",U:8,F:6,I:9,
+ ind:["Policy iteration cycle-time (months from evidence to amendment)","Civil-service reskilling throughput per year","Adoption lag behind frontier practice (months)"],
+ act:["Institutionalise rapid policy-learning loops with sunset clauses","Fund continuous reskilling as a budget line, not a project","Benchmark adoption lag annually against regional peers"],
+ anchor:"Acemoglu & Restrepo (2019), JEP 33(2)",risk:"Static advantages evaporate; the state optimises yesterday's problems with growing precision."},
+{n:28,ch:"X",theme:"Governance",t:"He who shapes the story of technology shapes the will of the people.",U:7,F:7,I:8,
+ ind:["Reach of national AI public-engagement programmes","Sentiment tracking of AI narratives in Bangla media","Citizen participation in AI policy consultations"],
+ act:["Run a national conversation on AI in Bangla, beyond elites","Commission Bangla-language creative work on AI futures","Mandate public consultation for major AI policies"],
+ anchor:"Fang (2026), The Economist",risk:"The AI narrative is written abroad; fatalism or hype displaces deliberate national choice."},
+{n:29,ch:"X",theme:"Resilience",t:"The next power will arise unseen — prepare before it is named.",U:6,F:5,I:9,
+ ind:["Horizon-scanning reports delivered to Cabinet per year","Foresight exercises covering frontier technologies","Budget share allocated to anticipatory capability"],
+ act:["Establish a National Foresight Office in the Cabinet Division","Run annual frontier-technology scenario planning","Maintain optionality: avoid irreversible single-vendor lock-ins"],
+ anchor:"Dafoe (2018), AI Governance",risk:"The next disruption finds Bangladesh as unprepared as the last; catch-up costs compound."},
+{n:30,ch:"X",theme:"Ethics",t:"Balance innovation with restraint, as the river balances flow with banks.",U:8,F:6,I:9,
+ ind:["Time-to-permit for sandboxed AI ventures","High-risk deployments blocked or remediated by review","Innovation index vs. harm-incident index, tracked jointly"],
+ act:["Pair every enabling measure with a proportionate safeguard","Publish joint innovation-and-harm dashboards","Review the regulatory perimeter annually with all stakeholders"],
+ anchor:"Floridi et al. (2018), Minds and Machines",risk:"Either banks without flow (stagnation) or flow without banks (harm); both end in lost legitimacy."},
+];
+S.forEach(s=>s.P=+( (s.U*0.4 + s.I*0.4 + s.F*0.2) ).toFixed(1)); // priority index
+
+const THEME_HEX={Governance:'#4A80C8',Economy:'#2A9D8A',Security:'#C0504A',Ethics:'#C8920A',Resilience:'#6A8FD0'};
+
+// ═══ SUTRA EXPLORER GRID ════════════════════════════════════════════════════
+const grid=document.getElementById('grid');
+let activeTheme='all', sortKey='n', query='';
+
+function render(){
+ let list=S.filter(s=>(activeTheme==='all'||s.theme===activeTheme))
+           .filter(s=>!query || s.t.toLowerCase().includes(query)||s.ind.join(' ').toLowerCase().includes(query)||s.act.join(' ').toLowerCase().includes(query));
+ list.sort((a,b)=> sortKey==='n' ? a.n-b.n : b[sortKey]-a[sortKey]);
+ grid.innerHTML='';
+ list.forEach((s,i)=>{
+  const d=document.createElement('div');
+  d.className=`sc t-${s.theme}`;
+  d.innerHTML=`
+   <div class="sc-head"><span class="sc-num">Sutra ${s.n} · Ch. ${s.ch}</span><span class="sc-theme">${s.theme}</span></div>
+   <p class="sc-text">${s.t}</p>
+   <div class="gauges">
+    <div class="g-row"><span class="g-lbl">Urgency</span><div class="g-track"><div class="g-fill u" style="width:${s.U*10}%"></div></div><span class="g-val">${s.U}</span></div>
+    <div class="g-row"><span class="g-lbl">Feasibility</span><div class="g-track"><div class="g-fill f" style="width:${s.F*10}%"></div></div><span class="g-val">${s.F}</span></div>
+    <div class="g-row"><span class="g-lbl">Impact</span><div class="g-track"><div class="g-fill i" style="width:${s.I*10}%"></div></div><span class="g-val">${s.I}</span></div>
+   </div>
+   <span class="sc-expand">Open Analysis</span>`;
+  d.onclick=()=>openModal(s);
+  grid.appendChild(d);
+  setTimeout(()=>d.classList.add('animate'), 60+i*40);
+ });
+ document.getElementById('count').textContent=`${list.length} shown`;
+}
+document.querySelectorAll('.f-btn').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active'); activeTheme=b.dataset.theme; render();
+});
+document.getElementById('sort').onchange=e=>{sortKey=e.target.value;render();};
+document.getElementById('search').oninput=e=>{query=e.target.value.toLowerCase();render();};
+render();
+
+// ═══ MODAL ══════════════════════════════════════════════════════════════════
+const mbg=document.getElementById('modal-bg'), modal=document.getElementById('modal');
+function openModal(s){
+ const c=THEME_HEX[s.theme];
+ modal.innerHTML=`
+  <button class="m-close" onclick="document.getElementById('modal-bg').classList.remove('open')">×</button>
+  <span class="m-num" style="color:${c}">Sutra ${s.n} · Chapter ${s.ch} · ${s.theme} · Priority Index ${s.P}</span>
+  <p class="m-text" style="border-color:${c}">${s.t}</p>
+  <div class="m-radar-wrap">
+   <canvas id="m-radar" width="200" height="200"></canvas>
+   <div class="m-scores">
+    ${[['URGENCY',s.U,'#E05040'],['FEASIBILITY',s.F,'#2AB89A'],['IMPACT',s.I,'#F0C040']].map(([l,v,col])=>`
+     <div class="ms-row"><span class="ms-lbl">${l}</span><div class="ms-track"><div class="ms-fill" style="width:${v*10}%;background:${col}"></div></div><span class="ms-val">${v}</span></div>`).join('')}
+    <div class="ms-row"><span class="ms-lbl">PRIORITY</span><div class="ms-track"><div class="ms-fill" style="width:${s.P*10}%;background:linear-gradient(to right,#8B6914,#F0C040)"></div></div><span class="ms-val">${s.P}</span></div>
+   </div>
+  </div>
+  <div class="m-section"><div class="m-h">Key Indicators — what to measure</div>
+   <ul class="m-list">${s.ind.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+  <div class="m-section"><div class="m-h">Priority Actions — where to begin</div>
+   <ul class="m-list">${s.act.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+  <div class="m-section"><div class="m-h">Risk if Ignored</div>
+   <div class="m-risk">${s.risk}</div></div>
+  <div class="m-section"><div class="m-h">Scholarly Anchor</div>
+   <p class="m-anchor">${s.anchor}</p></div>`;
+ mbg.classList.add('open');
+ // mini radar
+ const cv=document.getElementById('m-radar'),ctx=cv.getContext('2d');
+ const cx=100,cy=100,r=78,vals=[s.U,s.F,s.I],labels=['U','F','I'];
+ for(let lvl=1;lvl<=4;lvl++){ctx.beginPath();
+  for(let i=0;i<3;i++){const a=i/3*Math.PI*2-Math.PI/2,rr=r*lvl/4;
+   i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+  ctx.closePath();ctx.strokeStyle='rgba(139,105,20,0.25)';ctx.lineWidth=0.7;ctx.stroke();}
+ ctx.beginPath();
+ vals.forEach((v,i)=>{const a=i/3*Math.PI*2-Math.PI/2,rr=r*v/10;
+  i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));});
+ ctx.closePath();ctx.fillStyle=c+'33';ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();
+ ctx.fillStyle='rgba(245,237,216,0.7)';ctx.font='bold 11px Cinzel';ctx.textAlign='center';
+ labels.forEach((l,i)=>{const a=i/3*Math.PI*2-Math.PI/2;
+  ctx.fillText(l,cx+(r+14)*Math.cos(a),cy+(r+14)*Math.sin(a)+4);});
+}
+mbg.onclick=e=>{if(e.target===mbg)mbg.classList.remove('open');};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')mbg.classList.remove('open');});
+
+// ═══ STRATEGY QUADRANT ══════════════════════════════════════════════════════
+(function(){
+ const cv=document.getElementById('quad-canvas'),ctx=cv.getContext('2d');
+ const W=760,H=560,pad=70;
+ const tip=document.getElementById('qtip');
+ const pts=[];
+ function draw(hover=null){
+  ctx.clearRect(0,0,W,H);
+  // quadrant fills
+  const mx=pad+(W-2*pad)/2, my=pad+(H-2*pad)/2;
+  ctx.fillStyle='rgba(42,157,138,0.06)';ctx.fillRect(mx,pad,W-pad-mx,my-pad);
+  ctx.fillStyle='rgba(240,192,64,0.05)';ctx.fillRect(pad,pad,mx-pad,my-pad);
+  ctx.fillStyle='rgba(139,26,26,0.05)';ctx.fillRect(pad,my,mx-pad,H-pad-my);
+  ctx.fillStyle='rgba(74,128,200,0.05)';ctx.fillRect(mx,my,W-pad-mx,H-pad-my);
+  // axes
+  ctx.strokeStyle='rgba(139,105,20,0.4)';ctx.lineWidth=1;
+  ctx.strokeRect(pad,pad,W-2*pad,H-2*pad);
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(mx,pad);ctx.lineTo(mx,H-pad);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad,my);ctx.lineTo(W-pad,my);ctx.stroke();
+  ctx.setLineDash([]);
+  // labels
+  ctx.fillStyle='rgba(245,237,216,0.55)';ctx.font='10px Cinzel';ctx.textAlign='center';
+  ctx.fillText('FEASIBILITY →',W/2,H-30);
+  ctx.save();ctx.translate(28,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('URGENCY →',0,0);ctx.restore();
+  // quadrant titles
+  ctx.font='italic 11px "IM Fell English"';
+  ctx.fillStyle='rgba(42,157,138,0.8)';ctx.fillText('ACT NOW — urgent & feasible',mx+(W-pad-mx)/2,pad+20);
+  ctx.fillStyle='rgba(240,192,64,0.7)';ctx.fillText('BUILD CAPACITY — urgent, hard',pad+(mx-pad)/2,pad+20);
+  ctx.fillStyle='rgba(139,80,80,0.8)';ctx.fillText('MONITOR — less urgent, hard',pad+(mx-pad)/2,H-pad-12);
+  ctx.fillStyle='rgba(120,150,200,0.8)';ctx.fillText('SCHEDULE — feasible, can wait',mx+(W-pad-mx)/2,H-pad-12);
+  // points
+  pts.length=0;
+  S.forEach(s=>{
+   const x=pad+(s.F/10)*(W-2*pad);
+   const y=H-pad-(s.U/10)*(H-2*pad);
+   const r=5+s.I*1.1;
+   pts.push({x,y,r,s});
+   const isH = hover && hover.s.n===s.n;
+   ctx.beginPath();ctx.arc(x,y,isH?r+3:r,0,Math.PI*2);
+   ctx.fillStyle=THEME_HEX[s.theme]+(isH?'FF':'B8');
+   ctx.fill();
+   ctx.strokeStyle=isH?'#F0C040':'rgba(245,237,216,0.4)';
+   ctx.lineWidth=isH?2:0.8;ctx.stroke();
+   ctx.fillStyle=isH?'#0D1E3A':'rgba(245,237,216,0.9)';
+   ctx.font='bold 8px Cinzel';ctx.textAlign='center';
+   ctx.fillText(s.n,x,y+3);
+  });
+ }
+ draw();
+ cv.addEventListener('mousemove',e=>{
+  const r=cv.getBoundingClientRect();
+  const sx=(e.clientX-r.left)*(W/r.width), sy=(e.clientY-r.top)*(H/r.height);
+  const hit=pts.find(p=>Math.hypot(p.x-sx,p.y-sy)<p.r+4);
+  draw(hit||null);
+  if(hit){tip.style.display='block';tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY+16)+'px';
+   tip.innerHTML=`<b>SUTRA ${hit.s.n} · ${hit.s.theme.toUpperCase()}</b>${hit.s.t}<br><span style="color:#C8920A;font-style:normal;font-size:10px">U ${hit.s.U} · F ${hit.s.F} · I ${hit.s.I} · Priority ${hit.s.P}</span>`;
+  } else tip.style.display='none';
+ });
+ cv.addEventListener('mouseleave',()=>{tip.style.display='none';draw();});
+ cv.addEventListener('click',e=>{
+  const r=cv.getBoundingClientRect();
+  const sx=(e.clientX-r.left)*(W/r.width), sy=(e.clientY-r.top)*(H/r.height);
+  const hit=pts.find(p=>Math.hypot(p.x-sx,p.y-sy)<p.r+4);
+  if(hit)openModal(hit.s);
+ });
+})();
+
+// ═══ SELF-ASSESSMENT ENGINE ═════════════════════════════════════════════════
+const sliders=document.getElementById('sliders');
+const ratings={};
+S.forEach(s=>{
+ ratings[s.n]=0;
+ const row=document.createElement('div');
+ row.className='as-row';
+ row.innerHTML=`<div class="as-lbl"><b>Sutra ${s.n} · ${s.theme}</b>${s.t.length>90?s.t.slice(0,88)+'…':s.t}</div>
+  <input type="range" min="0" max="10" value="0" data-n="${s.n}">
+  <span class="as-val" id="av-${s.n}">0</span>`;
+ sliders.appendChild(row);
+});
+sliders.addEventListener('input',e=>{
+ if(e.target.type==='range'){
+  const n=+e.target.dataset.n;
+  ratings[n]=+e.target.value;
+  document.getElementById('av-'+n).textContent=e.target.value;
+  compute();
+ }
+});
+
+const THEMES=['Governance','Economy','Security','Ethics','Resilience'];
+function compute(){
+ // weighted composite: weight by impact
+ let wsum=0,wtot=0;
+ S.forEach(s=>{wsum+=ratings[s.n]*s.I; wtot+=10*s.I;});
+ const total=Math.round(100*wsum/wtot);
+ document.getElementById('total-score').textContent=total;
+ // verdict
+ const v=document.getElementById('verdict');
+ if(total===0) v.textContent='Move the sliders to begin your assessment.';
+ else if(total<25) v.textContent='"The flood approaches and the embankment is unbuilt." — Foundational capability is absent; begin with Phase One actions.';
+ else if(total<50) v.textContent='"The banks are forming, but the river still rules." — Foundations exist; consistency and institutional depth are the gap.';
+ else if(total<75) v.textContent='"The delta learns its rivers." — A maturing capability; focus on the low-feasibility frontier sutras.';
+ else v.textContent='"He who commands trust rules forever." — A leading institution; your duty now is to lift others.';
+ // theme scores
+ const tr=document.getElementById('theme-rows');tr.innerHTML='';
+ const themeVals={};
+ THEMES.forEach(t=>{
+  const subset=S.filter(s=>s.theme===t);
+  const avg=subset.reduce((a,s)=>a+ratings[s.n],0)/subset.length;
+  themeVals[t]=avg;
+  tr.innerHTML+=`<div class="at-row"><span class="at-lbl">${t}</span>
+   <div class="at-track"><div class="at-fill" style="width:${avg*10}%;background:${THEME_HEX[t]}"></div></div>
+   <span class="at-val">${avg.toFixed(1)}</span></div>`;
+ });
+ drawAssessRadar(themeVals);
+}
+function drawAssessRadar(tv){
+ const cv=document.getElementById('assess-radar'),ctx=cv.getContext('2d');
+ const W=340,H=340,cx=W/2,cy=H/2,r=120;
+ ctx.clearRect(0,0,W,H);
+ for(let lvl=1;lvl<=5;lvl++){ctx.beginPath();
+  for(let i=0;i<5;i++){const a=i/5*Math.PI*2-Math.PI/2,rr=r*lvl/5;
+   i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+  ctx.closePath();ctx.strokeStyle=`rgba(139,105,20,${lvl===5?0.35:0.13})`;ctx.lineWidth=lvl===5?1:0.5;ctx.stroke();}
+ for(let i=0;i<5;i++){const a=i/5*Math.PI*2-Math.PI/2;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+  ctx.strokeStyle='rgba(139,105,20,0.15)';ctx.stroke();}
+ ctx.beginPath();
+ THEMES.forEach((t,i)=>{const a=i/5*Math.PI*2-Math.PI/2,rr=r*(tv[t]||0)/10;
+  i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));});
+ ctx.closePath();
+ ctx.fillStyle='rgba(240,192,64,0.18)';ctx.fill();
+ ctx.strokeStyle='#F0C040';ctx.lineWidth=2;ctx.stroke();
+ THEMES.forEach((t,i)=>{const a=i/5*Math.PI*2-Math.PI/2,rr=r*(tv[t]||0)/10;
+  ctx.beginPath();ctx.arc(cx+rr*Math.cos(a),cy+rr*Math.sin(a),4,0,Math.PI*2);
+  ctx.fillStyle=THEME_HEX[t];ctx.fill();});
+ ctx.fillStyle='rgba(245,237,216,0.75)';ctx.font='10px Cinzel';ctx.textAlign='center';
+ THEMES.forEach((t,i)=>{const a=i/5*Math.PI*2-Math.PI/2;
+  ctx.fillText(t,cx+(r+26)*Math.cos(a),cy+(r+26)*Math.sin(a)+4);});
+}
+compute();
+
+document.getElementById('reset-btn').onclick=()=>{
+ S.forEach(s=>{ratings[s.n]=0;
+  document.querySelector(`input[data-n="${s.n}"]`).value=0;
+  document.getElementById('av-'+s.n).textContent='0';});
+ compute();
+};
+document.getElementById('random-btn').onclick=()=>{
+ S.forEach(s=>{const v=Math.floor(2+Math.random()*7);ratings[s.n]=v;
+  document.querySelector(`input[data-n="${s.n}"]`).value=v;
+  document.getElementById('av-'+s.n).textContent=v;});
+ compute();
+};
+document.getElementById('export-btn').onclick=()=>{
+ let wsum=0,wtot=0;S.forEach(s=>{wsum+=ratings[s.n]*s.I;wtot+=10*s.I;});
+ const total=Math.round(100*wsum/wtot);
+ let report=`ARTHASHASTRA 2.0 — SUTRA READINESS ASSESSMENT REPORT\n`;
+ report+=`Generated: ${new Date().toLocaleDateString()}\n`;
+ report+=`Composite Readiness Score: ${total}/100\n\n`;
+ THEMES.forEach(t=>{
+  const subset=S.filter(s=>s.theme===t);
+  const avg=(subset.reduce((a,s)=>a+ratings[s.n],0)/subset.length).toFixed(1);
+  report+=`${t}: ${avg}/10\n`;
+ });
+ report+=`\nPER-SUTRA RATINGS\n${'─'.repeat(60)}\n`;
+ S.forEach(s=>{report+=`Sutra ${String(s.n).padStart(2)}: ${String(ratings[s.n]).padStart(2)}/10 — ${s.t.slice(0,70)}${s.t.length>70?'…':''}\n`;});
+ report+=`\nWEAKEST FIVE (focus areas)\n${'─'.repeat(60)}\n`;
+ [...S].sort((a,b)=>ratings[a.n]-ratings[b.n]).slice(0,5).forEach(s=>{
+  report+=`Sutra ${s.n} (rated ${ratings[s.n]}): ${s.act[0]}\n`;});
+ const blob=new Blob([report],{type:'text/plain'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='sutra_readiness_assessment.txt';
+ a.click();
+};
+</script>
+</body>
+</html>
