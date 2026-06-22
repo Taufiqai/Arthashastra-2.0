@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arthashastra 2.0 — Sutras for Bangladesh in the Age of AI</title>
+<meta name="description" content="Arthashastra 2.0: Sutras for Bangladesh in the Age of Artificial Intelligence — a book by Md Taufiqul Islam. Explore the immersive book portal and the interactive Sutra Analytics Lab.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+ --navy:#0D1E3A;--navy2:#1B3A6B;--gold:#8B6914;--goldl:#C8920A;--goldg:#F0C040;
+ --cream:#F5EDD8;--teal:#1A6B5E;--rust:#7A2810;
+ --disp:'Cinzel',serif;--fell:'IM Fell English',serif;--text:'Crimson Pro',serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--cream);font-family:var(--text);font-size:18px;line-height:1.7;overflow-x:hidden}
+::selection{background:var(--goldg);color:var(--navy)}
+
+/* animated river canvas */
+#bg{position:fixed;inset:0;z-index:0;opacity:0.5;pointer-events:none}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.035;
+ background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+ background-size:256px;animation:grain .8s steps(2) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}25%{transform:translate(-2%,-1%)}50%{transform:translate(1%,2%)}75%{transform:translate(2%,-2%)}}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+ padding:20px 56px;background:linear-gradient(to bottom,rgba(13,30,58,0.96),transparent);backdrop-filter:blur(3px)}
+.logo{font-family:var(--disp);font-size:12px;letter-spacing:0.28em;color:var(--goldg);text-transform:uppercase;text-decoration:none}
+.nav-r{display:flex;gap:34px}
+.nav-r a{font-family:var(--disp);font-size:10px;letter-spacing:0.18em;color:rgba(245,237,216,0.6);text-transform:uppercase;text-decoration:none;transition:color .3s;position:relative}
+.nav-r a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--goldg);transition:width .4s}
+.nav-r a:hover{color:var(--goldg)}.nav-r a:hover::after{width:100%}
+
+/* hero */
+#hero{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px}
+.h-orn{width:1px;height:70px;background:linear-gradient(to bottom,transparent,var(--gold));margin:0 auto 36px;animation:fd 2s forwards;opacity:0}
+@keyframes fd{to{opacity:1}}
+.h-sub{font-family:var(--disp);font-size:11px;letter-spacing:0.42em;color:var(--goldl);text-transform:uppercase;margin-bottom:26px;animation:fu 1.1s .3s forwards;opacity:0}
+.h-title{font-family:var(--disp);font-size:clamp(46px,8vw,108px);font-weight:700;line-height:1.02;letter-spacing:0.04em;animation:fu 1.1s .6s forwards;opacity:0;margin-bottom:22px}
+.h-title span{color:var(--goldg)}
+.h-tag{font-family:var(--fell);font-style:italic;font-size:clamp(16px,2vw,21px);color:rgba(245,237,216,0.72);max-width:660px;animation:fu 1.1s .9s forwards;opacity:0;margin-bottom:18px}
+.h-author{font-family:var(--disp);font-size:12px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;animation:fu 1.1s 1.1s forwards;opacity:0;margin-bottom:54px}
+@keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* portal cards */
+.portals{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1080px;width:100%;animation:fu 1.1s 1.4s forwards;opacity:0}
+.portal{position:relative;overflow:hidden;text-decoration:none;display:block;padding:40px 34px;
+ border:1px solid rgba(139,105,20,0.3);background:linear-gradient(155deg,rgba(27,58,107,0.32),rgba(13,30,58,0.5));
+ transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .45s,box-shadow .45s;text-align:left}
+.portal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .5s}
+.portal:hover{transform:translateY(-8px);border-color:rgba(240,192,64,0.55);box-shadow:0 28px 60px rgba(0,0,0,0.45)}
+.portal:hover::before{transform:scaleX(1)}
+.p-canvas{position:absolute;inset:0;opacity:0.14;pointer-events:none}
+.p-inner{position:relative;z-index:1}
+.p-label{font-family:var(--disp);font-size:9px;letter-spacing:0.34em;color:var(--goldl);text-transform:uppercase;margin-bottom:18px;display:block}
+.p-title{font-family:var(--disp);font-size:26px;font-weight:600;color:var(--cream);margin-bottom:12px;line-height:1.15}
+.p-desc{font-size:14.5px;color:rgba(245,237,216,0.6);line-height:1.65;margin-bottom:24px;min-height:62px}
+.p-go{font-family:var(--disp);font-size:10px;letter-spacing:0.26em;color:var(--goldg);text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.p-go::after{content:'→';transition:transform .3s}
+.portal:hover .p-go::after{transform:translateX(6px)}
+
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;animation:fu 1.1s 2s forwards;opacity:0}
+.scroll-hint span{font-family:var(--disp);font-size:9px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase}
+.scroll-arrow{width:1px;height:46px;background:linear-gradient(to bottom,var(--gold),transparent);animation:sp 2s infinite}
+@keyframes sp{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+
+/* sections */
+section{position:relative;z-index:2;padding:120px 56px}
+.inner{max-width:1100px;margin:0 auto}
+.sec-label{font-family:var(--disp);font-size:10px;letter-spacing:0.4em;color:var(--goldl);text-transform:uppercase;display:block;margin-bottom:18px}
+.sec-h{font-family:var(--disp);font-size:clamp(28px,4vw,46px);font-weight:600;line-height:1.16;margin-bottom:26px}
+.sec-h em{font-style:italic;color:var(--goldg)}
+.body{font-size:16px;line-height:1.85;color:rgba(245,237,216,0.76);margin-bottom:20px}
+
+.gold-rule{position:relative;text-align:center;max-width:900px;margin:0 auto}
+.gold-rule::before,.gold-rule::after{content:'';position:absolute;top:50%;height:1px;width:35%;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.gold-rule::before{left:0}.gold-rule::after{right:0}
+.gem{display:inline-block;width:8px;height:8px;background:var(--goldg);transform:rotate(45deg)}
+
+/* maxim */
+#maxim{text-align:center;padding:90px 56px}
+.maxim-t{font-family:var(--fell);font-style:italic;font-size:clamp(22px,3.4vw,36px);line-height:1.55;color:var(--cream);max-width:820px;margin:0 auto}
+.maxim-a{font-family:var(--disp);font-size:11px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase;margin-top:26px}
+
+/* about grid */
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:80px;align-items:center}
+.stats{display:flex;gap:44px;margin-top:36px;padding-top:36px;border-top:1px solid rgba(139,105,20,0.25)}
+.stat{text-align:center}
+.stat b{font-family:var(--disp);font-size:40px;font-weight:700;color:var(--goldg);display:block;line-height:1;margin-bottom:6px}
+.stat span{font-family:var(--disp);font-size:9px;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase}
+.cover-3d{width:240px;height:330px;margin:0 auto;position:relative;overflow:hidden;
+ background:linear-gradient(135deg,var(--navy2),var(--teal));border-left:6px solid var(--goldg);
+ box-shadow:-14px 14px 44px rgba(0,0,0,.6),8px 8px 28px rgba(240,192,64,.14);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;
+ transform:perspective(640px) rotateY(-13deg);transition:transform .5s}
+.cover-3d:hover{transform:perspective(640px) rotateY(-5deg) translateY(-8px)}
+.cover-3d canvas{position:absolute;inset:0;opacity:.32}
+.cv-in{position:relative;z-index:1;text-align:center}
+.cv-t{font-family:var(--disp);font-size:18px;font-weight:700;color:var(--cream);margin-bottom:9px}
+.cv-s{font-family:var(--fell);font-style:italic;font-size:10px;color:rgba(245,237,216,.7);margin-bottom:16px;line-height:1.5}
+.cv-l{width:42px;height:1px;background:var(--goldg);margin:0 auto 16px}
+.cv-a{font-family:var(--disp);font-size:9px;letter-spacing:0.3em;color:var(--goldg);text-transform:uppercase}
+
+/* downloads */
+#downloads{background:rgba(13,30,58,0.55)}
+.dl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;margin-top:48px}
+.dl-card{display:block;text-decoration:none;padding:30px 28px;border:1px solid rgba(139,105,20,0.2);
+ background:rgba(27,58,107,0.16);transition:all .35s}
+.dl-card:hover{border-color:rgba(240,192,64,0.45);background:rgba(139,105,20,0.1);transform:translateY(-4px)}
+.dl-ext{font-family:var(--disp);font-size:9px;letter-spacing:0.25em;color:var(--goldg);text-transform:uppercase;border:1px solid rgba(240,192,64,0.4);padding:4px 10px;display:inline-block;margin-bottom:16px}
+.dl-name{font-family:var(--disp);font-size:16px;color:var(--cream);margin-bottom:8px;line-height:1.3}
+.dl-desc{font-size:13px;color:rgba(245,237,216,0.55);line-height:1.6}
+
+/* author */
+.auth-grid{display:grid;grid-template-columns:280px 1fr;gap:70px;align-items:start}
+.auth-port{width:100%;aspect-ratio:3/4;position:relative;overflow:hidden;border:1px solid rgba(139,105,20,0.3);
+ background:linear-gradient(135deg,var(--navy2),var(--teal))}
+.auth-port canvas{position:absolute;inset:0;width:100%;height:100%}
+.auth-badge{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(13,30,58,0.95),transparent);padding:24px 18px 18px;text-align:center}
+.auth-badge .nm{font-family:var(--disp);font-size:15px;color:var(--cream);display:block}
+.auth-badge .rl{font-family:var(--disp);font-size:9px;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase}
+blockquote{font-family:var(--fell);font-style:italic;font-size:20px;line-height:1.6;color:var(--cream);border-left:2px solid var(--gold);padding-left:26px;margin:30px 0}
+
+footer{position:relative;z-index:2;padding:56px;text-align:center;border-top:1px solid rgba(139,105,20,0.2);background:rgba(13,30,58,0.6)}
+.f-m{font-family:var(--fell);font-style:italic;font-size:16px;color:rgba(245,237,216,0.5);margin-bottom:22px}
+.f-c{font-family:var(--disp);font-size:10px;letter-spacing:0.25em;color:rgba(245,237,216,0.32);text-transform:uppercase}
+
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .9s,transform .9s}
+.reveal.vis{opacity:1;transform:none}
+
+@media(max-width:900px){
+ nav{padding:16px 22px}.nav-r{display:none}
+ section{padding:80px 22px}
+ .portals{grid-template-columns:1fr}
+ .about-grid,.auth-grid{grid-template-columns:1fr;gap:46px}
+ .h-title{font-size:clamp(38px,12vw,64px)}
+}
+@media(min-width:901px) and (max-width:1180px){
+ .portals{grid-template-columns:1fr 1fr;max-width:760px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div class="grain"></div>
+
+<nav>
+ <a class="logo" href="#hero">Arthashastra 2.0</a>
+ <div class="nav-r">
+  <a href="#enter">Enter</a>
+  <a href="#about">The Book</a>
+  <a href="dashboard.html">Simulator</a>
+  <a href="#downloads">Downloads</a>
+  <a href="#author">Author</a>
+ </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+ <div class="h-orn"></div>
+ <p class="h-sub">Md Taufiqul Islam · 2026</p>
+ <h1 class="h-title">Arthashastra<br><span>2.0</span></h1>
+ <p class="h-tag">Sutras for Bangladesh in the Age of Artificial Intelligence — as if Kautilya were advising a modern State shaped by rivers, a large population, and digital ambition.</p>
+ <p class="h-author">Joint Secretary · Cabinet Division, Government of Bangladesh</p>
+
+ <div class="portals" id="enter">
+  <a class="portal" href="book.html">
+   <canvas class="p-canvas" data-art="river"></canvas>
+   <div class="p-inner">
+    <span class="p-label">Portal One</span>
+    <div class="p-title">The Immersive<br>Book Portal</div>
+    <p class="p-desc">Journey through ten chapters and thirty sutras with original post-impressionist artwork, animated visualisations, and an interactive strategic roadmap.</p>
+    <span class="p-go">Enter the Book</span>
+   </div>
+  </a>
+  <a class="portal" href="lab.html">
+   <canvas class="p-canvas" data-art="net"></canvas>
+   <div class="p-inner">
+    <span class="p-label">Portal Two</span>
+    <div class="p-title">The Sutra<br>Analytics Lab</div>
+    <p class="p-desc">Every sutra instrumented: governance scores, 90 indicators, a strategy quadrant map, and a live self-assessment engine for your own institution.</p>
+    <span class="p-go">Open the Lab</span>
+   </div>
+  </a>
+  <a class="portal" href="dashboard.html">
+   <canvas class="p-canvas" data-art="ledger"></canvas>
+   <div class="p-inner">
+    <span class="p-label">Portal Three</span>
+    <div class="p-title">The Fiscal–Monetary<br>Simulator</div>
+    <p class="p-desc">Model Bangladesh's FY27 economy: adjust the pay scale, deficit, and financing mix, and watch inflation, the policy rate, and private credit respond in real time.</p>
+    <span class="p-go">Run the Model</span>
+   </div>
+  </a>
+ </div>
+
+ <div class="scroll-hint"><span>Scroll</span><div class="scroll-arrow"></div></div>
+</section>
+
+<!-- MAXIM -->
+<section id="maxim">
+ <div class="gold-rule" style="margin-bottom:54px"><span class="gem"></span></div>
+ <p class="maxim-t">"He who commands armies rules the present.<br>He who commands data rules the future.<br>He who commands trust rules forever."</p>
+ <p class="maxim-a">— Arthashastra 2.0, Closing Maxim</p>
+ <div class="gold-rule" style="margin-top:54px"><span class="gem"></span></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+ <div class="inner">
+  <div class="about-grid">
+   <div class="reveal">
+    <span class="sec-label">About the Work</span>
+    <h2 class="sec-h">Where Classical Wisdom<br>Meets <em>Digital Ambition</em></h2>
+    <p class="body">The original Arthashastra of Kautilya — written circa 300 BCE — was the most comprehensive science of statecraft ever produced. It understood that the sovereign who comprehends the information environment of his era holds the decisive advantage.</p>
+    <p class="body">Arthashastra 2.0 applies this ancient method to the most consequential challenge facing Bangladesh today: artificial intelligence. Through thirty original sutras, ten chapters of rigorous scholarship, and more than forty peer-reviewed citations, it charts a course from digital dependency to sovereign trust.</p>
+    <div class="stats">
+     <div class="stat"><b>30</b><span>Sutras</span></div>
+     <div class="stat"><b>10</b><span>Chapters</span></div>
+     <div class="stat"><b>42</b><span>References</span></div>
+    </div>
+   </div>
+   <div class="reveal" style="transition-delay:.15s">
+    <div class="cover-3d">
+     <canvas data-art="cover"></canvas>
+     <div class="cv-in">
+      <div class="cv-t">Arthashastra<br>2.0</div>
+      <div class="cv-s">Sutras for Bangladesh<br>in the Age of AI</div>
+      <div class="cv-l"></div>
+      <div class="cv-a">Md Taufiqul Islam</div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- DOWNLOADS -->
+<section id="downloads">
+ <div class="inner">
+  <div class="reveal" style="text-align:center">
+   <span class="sec-label">The Library</span>
+   <h2 class="sec-h" style="text-align:center">Read &amp; <em>Download</em></h2>
+   <p class="body" style="max-width:560px;margin:0 auto">Every edition of the work, freely available in print-ready and editable formats.</p>
+  </div>
+  <div class="dl-grid reveal" style="transition-delay:.15s">
+   <a class="dl-card" href="downloads/Arthashastra_2_0_PostImpressionist.pdf" download>
+    <span class="dl-ext">PDF</span>
+    <div class="dl-name">Illustrated Edition</div>
+    <p class="dl-desc">The complete book with original post-impressionist artwork — the definitive reading copy.</p>
+   </a>
+   <a class="dl-card" href="downloads/Arthashastra_2_0_Analytical_Companion.pdf" download>
+    <span class="dl-ext">PDF</span>
+    <div class="dl-name">Analytical Companion</div>
+    <p class="dl-desc">All 30 sutras instrumented with governance scores, indicators, actions, and the summary heatmap.</p>
+   </a>
+   <a class="dl-card" href="downloads/Arthashastra_2_0_Illustrated.pdf" download>
+    <span class="dl-ext">PDF</span>
+    <div class="dl-name">Diagram Edition</div>
+    <p class="dl-desc">The earlier edition featuring technical diagrams and data visualisations.</p>
+   </a>
+   <a class="dl-card" href="downloads/Arthashastra_2_0_Book.docx" download>
+    <span class="dl-ext">DOCX</span>
+    <div class="dl-name">Manuscript</div>
+    <p class="dl-desc">The editable Word manuscript — full text, chapters, and references.</p>
+   </a>
+  </div>
+ </div>
+</section>
+
+<!-- AUTHOR -->
+<section id="author">
+ <div class="inner">
+  <div class="auth-grid">
+   <div class="reveal">
+    <div class="auth-port">
+     <canvas data-art="author"></canvas>
+     <div class="auth-badge"><span class="nm">Md Taufiqul Islam</span><span class="rl">Joint Secretary · Cabinet Division</span></div>
+    </div>
+   </div>
+   <div class="reveal" style="transition-delay:.15s">
+    <span class="sec-label">The Author</span>
+    <h2 class="sec-h">Practitioner.<br><em>Scholar. Strategist.</em></h2>
+    <p class="body">Md Taufiqul Islam is a Joint Secretary at the Cabinet Division of the Government of Bangladesh and a graduate of Monash University. His work bridges public administration, digital policy, and strategic governance.</p>
+    <blockquote>"The AI is a telescope that sees a compressed version of the entire internet. It can see far, but it has no eyes. We are the eye."</blockquote>
+    <p class="body">This book is the culmination of an inquiry drawing on Kautilya's Arthashastra, contemporary political economy, and the lived reality of governing a nation of 170 million people at the frontier of the AI transition.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<footer>
+ <p class="f-m">"The delta does not resist the flood. It absorbs it, works with it, and emerges — transformed but vital — on the other side."</p>
+ <div class="gold-rule" style="max-width:400px;margin:22px auto"><span class="gem"></span></div>
+ <p class="f-c">© 2026 Md Taufiqul Islam · Arthashastra 2.0 · All rights reserved</p>
+</footer>
+
+<script>
+// ── animated river background ──
+(function(){
+ const cv=document.getElementById('bg'),ctx=cv.getContext('2d');let W,H,t=0,p=[];
+ function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+ rs();addEventListener('resize',rs);
+ for(let i=0;i<110;i++)p.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:Math.random()*.4-.2,vy:Math.random()*.25+.05,s:Math.random()*1.8+.4,a:Math.random()*.4+.1,h:Math.random()*30+35});
+ function wave(y,amp,fr,ph,c,al){ctx.beginPath();ctx.moveTo(0,y);for(let x=0;x<=W;x+=3){ctx.lineTo(x,y+Math.sin(x*fr+ph)*amp+Math.sin(x*fr*.5+ph*1.3)*amp*.4);}ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.globalAlpha=al;ctx.fillStyle=c;ctx.fill();ctx.globalAlpha=1;}
+ function fr(){ctx.clearRect(0,0,W,H);t+=.008;
+  wave(H*.75+Math.sin(t*.3)*12,30,.005,t*.8,'#0D2040',.5);
+  wave(H*.78+Math.sin(t*.25)*8,22,.007,t,'#0D3060',.4);
+  wave(H*.82+Math.sin(t*.2)*6,16,.009,t*1.2,'#1A4070',.3);
+  p.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.y>H){o.y=0;o.x=Math.random()*W;}if(o.x<0)o.x=W;if(o.x>W)o.x=0;ctx.beginPath();ctx.arc(o.x,o.y,o.s,0,7);ctx.globalAlpha=o.a;ctx.fillStyle=`hsl(${o.h},60%,70%)`;ctx.fill();ctx.globalAlpha=1;});
+  requestAnimationFrame(fr);}fr();
+})();
+
+// ── mulberry rng + post-impressionist painters for card canvases ──
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function strokeRect(ctx,x,y,ang,len,w,col,al){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.beginPath();ctx.rect(-w/2,-len/2,w,len);ctx.fillStyle=col;ctx.globalAlpha=al;ctx.fill();ctx.restore();ctx.globalAlpha=1;}
+
+function paint(cv){
+ const art=cv.dataset.art;const ctx=cv.getContext('2d');
+ const w=cv.width=cv.offsetWidth||300, h=cv.height=cv.offsetHeight||200;
+ const r=rng({river:7,net:57,cover:13,author:89,ledger:33}[art]||1);
+ if(art==='river'){
+  const sky=['#1B2A6B','#2A4080','#3A5FA0','#4A80C0'];
+  for(let i=0;i<250;i++)strokeRect(ctx,r()*w,r()*h*.55+h*.45,r()*.5-.25+Math.PI/2,r()*22+10,r()*5+3,sky[0|r()*4],.7);
+  const rv=['#2860A8','#3870B8','#5090C8','#A0C4E8'];
+  [[.2,0],[.5,.04],[.8,-.03]].forEach(([rx,sl])=>{for(let y=0;y<h*.5;y+=3){const x=rx*w+y*sl*w+Math.sin(y*.08)*8;strokeRect(ctx,x,y,Math.PI/2+r()*.3-.15,14,r()*5+4,rv[0|r()*4],.75);}});
+  ctx.beginPath();ctx.arc(w*.82,h*.78,16,0,7);ctx.fillStyle='#F0A820';ctx.globalAlpha=.85;ctx.fill();ctx.globalAlpha=1;
+ } else if(art==='net'){
+  ctx.fillStyle='#080C1E';ctx.fillRect(0,0,w,h);
+  const dp=['#1B3A6B','#4A80C8','#90C0E8','#C09030','#F0D060','#A040A0'];
+  for(let i=0;i<900;i++){ctx.beginPath();ctx.arc(r()*w,r()*h,r()*2.5+.8,0,7);ctx.fillStyle=dp[0|r()*6];ctx.globalAlpha=.7;ctx.fill();ctx.globalAlpha=1;}
+  const nodes=[[.2,.5],[.5,.7],[.8,.4],[.35,.25],[.65,.85]].map(([a,b])=>[a*w,b*h]);
+  nodes.forEach(([nx,ny])=>{for(let i=0;i<40;i++){ctx.beginPath();ctx.arc(nx+r()*30-15,ny+r()*30-15,r()*3+1,0,7);ctx.fillStyle='#F0D060';ctx.globalAlpha=.6;ctx.fill();ctx.globalAlpha=1;}});
+ } else if(art==='cover'){
+  const rv=['#2860A8','#3870B8','#5090C8'];
+  for(let i=0;i<260;i++){const x=r()*w,y=r()*h,a=r()*.6-.3+Math.PI/2;strokeRect(ctx,x,y,a,r()*14+6,r()*4+2,rv[0|r()*3],.5);}
+  ctx.beginPath();ctx.arc(w*.8,h*.75,16,0,7);ctx.fillStyle='rgba(240,192,64,.7)';ctx.fill();
+ } else if(art==='ledger'){
+  // banknote-green guilloché + rising bars, echoing the simulator theme
+  ctx.fillStyle='#0E3B2E';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(159,196,174,0.25)';ctx.lineWidth=.6;
+  for(let i=0;i<26;i++){ctx.beginPath();
+   for(let x=0;x<=w;x+=4){const y=h*.5+Math.sin(x*.03+i*.5)*((i%2?18:11))+i*3-40;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+   ctx.globalAlpha=.4;ctx.stroke();ctx.globalAlpha=1;}
+  // ledger bars
+  const bc=['#1F7A4D','#14543F','#B07A18','#1F7A4D','#14543F'];
+  for(let i=0;i<7;i++){const bw=w/9,bx=w*.12+i*(bw+w*.02),bh=h*(.2+r()*.55);
+   ctx.fillStyle=bc[i%bc.length];ctx.globalAlpha=.55;
+   ctx.fillRect(bx,h-bh-12,bw,bh);ctx.globalAlpha=1;}
+ }
+}
+document.querySelectorAll('canvas[data-art]').forEach(paint);
+addEventListener('resize',()=>document.querySelectorAll('canvas[data-art]').forEach(paint));
+
+// ── reveal on scroll ──
+const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>ob.observe(el));
+
+// ── hero parallax ──
+addEventListener('scroll',()=>{const y=scrollY;const hero=document.getElementById('hero');if(hero&&y<innerHeight)hero.style.transform=`translateY(${y*0.25}px)`;});
+</script>
+</body>
+</html>
